@@ -1,0 +1,23 @@
+version: '3.7'
+
+networks:
+  receipt:
+    name: receipt
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: receipt-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: receipt
+      MYSQL_USER: receipt
+      MYSQL_PASSWORD: receipt
+    volumes:
+      - /opt/docker/receipt/mysql:/var/lib/mysql
+    networks:
+      - receipt
+    ports:
+      - "9502:3306"
+    restart: unless-stopped

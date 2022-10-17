@@ -1,0 +1,42 @@
+version: '3.7'
+
+networks:
+  receipt:
+    name: receipt
+    external: true
+
+services:
+  php:
+    container_name: receipt-php
+    image: ${HUB}/php:${TAG}
+    build:
+      context: .
+      target: app_php
+    env_file: .env
+    volumes:
+      - /opt/docker/receipt/php_socket:/var/run/php
+      - php_socket:/var/run/php
+    networks:
+      - receipt
+    restart: unless-stopped
+
+  nginx:
+    container_name: receipt-nginx
+    image: ${HUB}/nginx:${TAG}
+    build:
+      context: .
+      target: nginx
+    depends_on:
+      - php
+    volumes:
+      - ./public:/application/public:delegated
+      - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:delegated
+      - php_socket:/var/run/php
+    ports:
+      - "9500:80"
+    networks:
+      - receipt
+    restart: unless-stopped
+    
+volumes:
+  php_socket:

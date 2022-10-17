@@ -1,0 +1,36 @@
+parameters:
+    s3.key: "%env(AMAZON_S3_KEY)%"
+    s3.region: "%env(AMAZON_S3_REGION)%"
+    s3.version: "%env(AMAZON_S3_VERSION)%"
+    s3.secret: "%env(AMAZON_S3_SECRET)%"
+    s3.bucket: "%env(AMAZON_S3_BUCKET)%"
+    s3.url: "%env(AMAZON_S3_URL)%"
+    host.prefix: "%env(HOST_PREFIX)%"
+
+services:
+    amazon.s3.client:
+        class: Aws\S3\S3Client
+        factory: [ Aws\S3\S3Client, factory ]
+        arguments:
+            -   credentials: { key: "%s3.key%", secret: "%s3.secret%" }
+                region: "%s3.region%"
+                version: "%s3.version%"
+    Aws\S3\S3ClientInterface: '@amazon.s3.client'
+    App\Service\Upload\UploadManager:
+        arguments:
+            - "@amazon.s3.client"
+    App\Service\ErrorResponse:
+        arguments:
+            - '@Symfony\Component\Validator\Validator\ValidatorInterface'
+    App\Service\Upload\UploadInterface: '@App\Service\Upload\UploadManager'
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            string $bucket: "%s3.bucket%"
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
