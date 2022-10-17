@@ -7,5 +7,5 @@ docker-compose up -d --build
 ##dev
 
 ```bash
-docker-compose -f docker-compose.services.yml -p receipt-services up -d
+docker-compose -f docker-compose.services.yml -p boiler-services up -d
 ```

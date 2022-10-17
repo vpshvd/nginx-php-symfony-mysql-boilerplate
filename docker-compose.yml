@@ -1,27 +1,27 @@
 version: '3.7'
 
 networks:
-  receipt:
-    name: receipt
+  boiler:
+    name: boiler
     external: true
 
 services:
   php:
-    container_name: receipt-php
+    container_name: boiler-php
     image: ${HUB}/php:${TAG}
     build:
       context: .
       target: app_php
     env_file: .env
     volumes:
-      - /opt/docker/receipt/php_socket:/var/run/php
+      - /opt/docker/boiler/php_socket:/var/run/php
       - php_socket:/var/run/php
     networks:
-      - receipt
+      - boiler
     restart: unless-stopped
 
   nginx:
-    container_name: receipt-nginx
+    container_name: boiler-nginx
     image: ${HUB}/nginx:${TAG}
     build:
       context: .
@@ -35,7 +35,7 @@ services:
     ports:
       - "9500:80"
     networks:
-      - receipt
+      - boiler
     restart: unless-stopped
     
 volumes:
